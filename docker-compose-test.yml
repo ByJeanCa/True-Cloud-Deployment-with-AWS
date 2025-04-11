@@ -10,7 +10,7 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - ENV=test
-    command: ["./wait-for-db.sh", "python", "app.py"]
+    command: ["./wait-for-db.sh", "python", "test.py"]
     networks:
       - jenkins-net
     container_name: api-test
