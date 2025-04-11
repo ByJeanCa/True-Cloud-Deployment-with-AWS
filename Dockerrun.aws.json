@@ -1,13 +1,13 @@
 {
-    "AWSEBDockerrunVersion": "1",
-    "Image": {
-      "Name": "api1:latest",
-      "Update": "true"
-    },
-    "Ports": [
-      {
-        "ContainerPort": 5000,
-        "HostPort": 80
-      }
-    ]
-  }
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "140516499605.dkr.ecr.us-east-1.amazonaws.com/flask-api:latest",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": 5000,
+      "HostPort": 80
+    }
+  ]
+}
