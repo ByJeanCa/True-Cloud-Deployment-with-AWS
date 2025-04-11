@@ -14,4 +14,5 @@ COPY . .
 
 RUN chmod +x wait-for-db.sh
 
-CMD ["./wait-for-db.sh"]
+ENTRYPOINT ["./wait-for-db.sh"]
+CMD ["python", "app.py"]
