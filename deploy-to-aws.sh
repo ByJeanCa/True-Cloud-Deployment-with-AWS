@@ -3,7 +3,7 @@ set -e
 
 # Variables
 AWS_REGION="us-east-1"
-ECR_REGISTRY="140516499605.us-east-1.amazonaws.com"
+ECR_REGISTRY="140516499605.dkr.ecr.us-east-1.amazonaws.com"
 REPO_NAME="flask-api"
 IMAGE_TAG="latest"
 
