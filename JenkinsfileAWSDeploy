@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+        stage("Clone repo") {
+            steps {
+                deleteDir()
+                script {
+                    try {git url: 'https://github.com/ByJeanCa/True-Cloud-Deployment-with-AWS', credentialsId: 'git-token', branch: 'main'
+                    } catch (err) {
+                        echo "❌ Error cloning repository${err.getMessage()}"
+                        error("Critical failure: the repo could not be cloned.") 
+                    }
+                }
+                withCredentials([file(credentialsId: 'db-test', variable: 'SECRET_TEST')]) {
+                    sh 'cp "$SECRET_TEST" .env'
+                }
+            }
+        } 
+        stage ("Test") {
+            steps {
+                sh "docker compose -f docker-compose-test.yml down"
+                sh 'docker compose -f docker-compose-test.yml build --no-cache'
+                sh 'docker compose -f docker-compose-test.yml up --abort-on-container-exit --exit-code-from api-test'
+                sh 'docker compose -f docker-compose-test.yml down'
+                sh 'rm -rf .env'
+            }
+        }
+        stage ("Build and Push to ECR") {
+            steps {
+                sh 'chmod +x deploy-to-aws.sh'
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-cred']]) {
+                    sh './deploy-to-aws.sh'
+                }
+            }
+        }
+        stage("Verify Deployment") {
+            steps {
+                sh 'curl -f http://flask-api.eba-xxxx.us-east-1.elasticbeanstalk.com/tasks'
+            }
+        }
+        stage("Notify") {
+            steps {
+                echo "✅ Despliegue exitoso en AWS"
+            }
+        }
+    }
+    post {
+        failure {
+            echo "❌ Fallo en el despliegue"
+        }
+    }
+}
